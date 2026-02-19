@@ -91,6 +91,14 @@ export default function LoginScreen() {
                                 <Text style={styles.termsText}>
                                     By continuing, you agree to our <Text style={styles.termsLink}>Terms</Text> and <Text style={styles.termsLink}>Privacy Policy</Text>.
                                 </Text>
+
+                                {/* DEV BYPASS */}
+                                <TouchableOpacity
+                                    style={styles.devButton}
+                                    onPress={() => router.replace('/(tabs)/learn')}
+                                >
+                                    <Text style={styles.devButtonText}>🛠️ Skip to App (Dev)</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </KeyboardAvoidingView>
@@ -249,5 +257,20 @@ const styles = StyleSheet.create({
     termsLink: {
         color: Colors.social.primary,
         fontWeight: '500',
+    },
+    devButton: {
+        marginTop: 16,
+        padding: 12,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        borderRadius: 8,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: Colors.neutral.border,
+        borderStyle: 'dashed',
+    },
+    devButtonText: {
+        color: Colors.neutral.text,
+        fontWeight: '600',
+        fontSize: 14,
     }
 });
