@@ -20,8 +20,11 @@ export default function VerifyScreen() {
     const { email } = useLocalSearchParams();
 
     // OTP logic
-    const [code, setCode] = useState(['', '', '', '']);
-    const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+    const [code, setCode] = useState(['', '', '', '', '', '', '', '']);
+    const inputRefs = [
+        useRef(null), useRef(null), useRef(null), useRef(null),
+        useRef(null), useRef(null), useRef(null), useRef(null)
+    ];
 
     const handleChange = (text, index) => {
         const newCode = [...code];
@@ -29,7 +32,7 @@ export default function VerifyScreen() {
         setCode(newCode);
 
         // Auto focus next
-        if (text && index < 3) {
+        if (text && index < 7) {
             inputRefs[index + 1].current.focus();
         }
     };
@@ -44,7 +47,7 @@ export default function VerifyScreen() {
 
     const handleVerify = async () => {
         const fullCode = code.join('');
-        if (fullCode.length === 4) {
+        if (fullCode.length === 8) {
             setLoading(true);
             try {
                 const {
@@ -138,10 +141,10 @@ export default function VerifyScreen() {
                     <TouchableOpacity
                         style={[
                             styles.verifyButton,
-                            code.join('').length < 4 && styles.disabledButton
+                            code.join('').length < 8 && styles.disabledButton
                         ]}
                         onPress={handleVerify}
-                        disabled={code.join('').length < 4}
+                        disabled={code.join('').length < 8}
                     >
                         <Text style={styles.verifyButtonText}>Verify</Text>
                         <MaterialIcons name="arrow-forward" size={20} color={Colors.neutral.white} />
@@ -194,7 +197,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 24,
+        paddingHorizontal: 16,
         paddingBottom: 40,
     },
     iconContainer: {
@@ -229,21 +232,20 @@ const styles = StyleSheet.create({
     },
     otpContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         width: '100%',
-        maxWidth: 320,
         marginBottom: 32,
-        gap: 12,
+        gap: 6,
     },
     otpInput: {
-        flex: 1,
-        height: 64,
+        width: 38,
+        height: 54,
         backgroundColor: Colors.neutral.white,
         borderWidth: 1,
         borderColor: Colors.neutral.border,
-        borderRadius: 16,
+        borderRadius: 10,
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: '700',
         color: Colors.neutral.text,
     },
