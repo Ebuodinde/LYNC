@@ -37,7 +37,7 @@ export default function TabLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabShowLabel: false, // We're using custom labels in icons
+                tabBarShowLabel: false, // Hide default labels since we use custom labels in TabIcon
                 tabBarStyle: {
                     backgroundColor: Colors.neutral.white,
                     borderTopWidth: 1,
