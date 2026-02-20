@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import Colors from '../../constants/Colors';
 
 // Custom Tab Icon component with badge support
@@ -42,9 +42,9 @@ export default function TabLayout() {
                     backgroundColor: Colors.neutral.white,
                     borderTopWidth: 1,
                     borderTopColor: Colors.neutral.border,
-                    height: 80,
-                    paddingBottom: 20,
-                    paddingTop: 10,
+                    height: Platform.OS === 'ios' ? 90 : 70, // Dynamic height for notched vs normal
+                    paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+                    paddingTop: 10, // Slight push down for visual balance
                     elevation: 10,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: -2 },
@@ -121,12 +121,13 @@ const styles = StyleSheet.create({
     tabIconContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 4,
+        gap: 6, // Slightly more space between icon wrapper and text
+        minWidth: 70, // Ensure text never wraps on narrow screens
     },
     iconWrapper: {
-        width: 64,
-        height: 36,
-        borderRadius: 18,
+        width: 60, // Slightly more compact pill
+        height: 32,
+        borderRadius: 16,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -145,12 +146,15 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#ef4444', // Red badge
+        backgroundColor: Colors.social.primary, // Red badge usually better, but keeping it thematic or explicit red
     },
     tabLabel: {
         fontSize: 11,
         fontWeight: '500',
         color: Colors.neutral.muted,
+        textAlign: 'center', // Keep text perfectly horizontally aligned
+        width: '100%', // Take full width of container
+        letterSpacing: -0.2, // Fit text better
     },
     tabLabelFocused: {
         fontWeight: '700',
