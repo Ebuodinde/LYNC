@@ -13,18 +13,39 @@ import {
 import { useRouter } from 'expo-router';
 import Colors from '../../constants/Colors';
 import Typography from '../../constants/Typography';
+import { supabase } from '../../lib/supabase';
 
 export default function LoginScreen() {
     const router = useRouter();
     const [email, setEmail] = useState('');
 
-    const handleContinue = () => {
-        if (email) {
-            // Pass the email as a parameter to the verification screen
-            router.push({
-                pathname: '/(auth)/verify',
-                params: { email }
+    const [loading, setLoading] = useState(false);
+
+    const handleContinue = async () => {
+        if (!email) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.signInWithOtp({
+                email,
+                options: {
+                    // This is where you might decide what data to embed or handle redirection
+                    // For OTP, Supabase sends a 6-digit code by default if email provider is set
+                },
             });
+
+            if (error) {
+                console.error("Login error:", error.message);
+                alert(error.message);
+            } else {
+                // Pass the email as a parameter to the verification screen
+                router.push({
+                    pathname: '/(auth)/verify',
+                    params: { email }
+                });
+            }
+        } finally {
+            setLoading(false);
         }
     };
 

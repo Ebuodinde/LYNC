@@ -1,14 +1,45 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
+import { supabase } from '../lib/supabase';
+import Colors from '../constants/Colors';
 
 export default function IndexScreen() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                // User is logged in, redirect to main app
+                // Later: check profile completion to see if they should go to onboarding
+                router.replace('/(tabs)/learn');
+            } else {
+                // No session, go to login
+                router.replace('/(auth)/login');
+            }
+        };
+
+        checkSession();
+
+        // Optional: Listen to auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session) {
+                router.replace('/(tabs)/learn');
+            } else {
+                router.replace('/(auth)/login');
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>LYNC (Social Shield)</Text>
-            <Text style={styles.subtitle}>Welcome to the MVP</Text>
-            <Link href="/(auth)/login" style={styles.link}>
-                Go to Login
-            </Link>
+            <ActivityIndicator size="large" color={Colors.social.primary} />
+            <Text style={styles.text}>Loading LYNC...</Text>
         </View>
     );
 }
@@ -18,21 +49,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: Colors.neutral.white,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    subtitle: {
+    text: {
+        marginTop: 16,
+        color: Colors.neutral.muted,
         fontSize: 16,
-        color: '#666',
-        marginBottom: 24,
-    },
-    link: {
-        color: '#007AFF',
-        fontSize: 16,
-        fontWeight: '600',
-    },
+    }
 });

@@ -13,6 +13,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import Typography from '../../constants/Typography';
+import { supabase } from '../../lib/supabase';
 
 export default function VerifyScreen() {
     const router = useRouter();
@@ -39,12 +40,39 @@ export default function VerifyScreen() {
         }
     };
 
-    const handleVerify = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleVerify = async () => {
         const fullCode = code.join('');
         if (fullCode.length === 4) {
-            // In a real app we'd verify with Supabase here
-            // Replace Auth stack with Tabs stack
-            router.replace('/(tabs)/learn');
+            setLoading(true);
+            try {
+                const {
+                    data: { session },
+                    error,
+                } = await supabase.auth.verifyOtp({
+                    email: email as string,
+                    token: fullCode,
+                    type: 'email',
+                });
+
+                if (error) {
+                    console.error("Verification error:", error.message);
+                    alert(error.message);
+                } else if (session) {
+                    // Check if user is completing onboarding or new
+                    // Assume new users go to onboarding, existing to tabs
+                    // For MVP simplicity, we might route directly to origin if they have no profile
+                    // We'll figure this logic definitively in the index.tsx session controller later
+                    // Currently pushing to learn directly to match previous mock
+                    router.replace('/(tabs)/learn');
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                alert("An unexpected error occurred.");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
